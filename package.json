@@ -1,15 +1,25 @@
 {
   "name": "colombian-working-days-api",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "dev": "yarn types && wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "types": "wrangler types --env-interface CloudflareBindings"
+    "types": "wrangler types --env-interface CloudflareBindings",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "dependencies": {
     "hono": "^4.9.7"
   },
   "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "eslint": "^9.35.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.44.0",
     "wrangler": "^4.4.0"
   }
 }
