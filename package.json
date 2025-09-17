@@ -2,9 +2,9 @@
   "name": "colombian-working-days-api",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "yarn types && wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "types": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
     "hono": "^4.9.7"
