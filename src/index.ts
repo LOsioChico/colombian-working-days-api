@@ -1,9 +1,9 @@
 import { Hono } from "hono";
 
+import workingDaysController from "./constrollers/working-days.controller";
+
 const app = new Hono<{ Bindings: CloudflareBindings }>();
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
+app.route("/working-days", workingDaysController);
 
 export default app;
