@@ -2,10 +2,11 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "colombian-working-days-api",
   "main": "src/index.ts",
-  "compatibility_date": "2025-09-17"
-  // "compatibility_flags": [
-  //   "nodejs_compat"
-  // ],
+  "compatibility_date": "2025-09-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+  },
   // "vars": {
   //   "MY_VAR": "my-variable"
   // },
