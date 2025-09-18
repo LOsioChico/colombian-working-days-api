@@ -18,18 +18,15 @@ export const calculateWorkingDays = async (
     ? toZonedTime(new Date(input.date), BUSINESS_HOURS.TIMEZONE)
     : toZonedTime(new Date(), BUSINESS_HOURS.TIMEZONE);
 
-  const adjustedDate = adjustToWorkingTime(startDate);
-
   const addDaysIfNeeded = (date: Date): Date =>
-    input.days
-      ? addBusinessDaysWithHolidays(date, input.days, holidays)
-      : adjustedDate;
+    input.days ? addBusinessDaysWithHolidays(date, input.days, holidays) : date;
 
   const addHoursIfNeeded = (date: Date): Date =>
-    input.hours ? addWorkingHours(date, input.hours) : adjustedDate;
+    input.hours ? addWorkingHours(date, input.hours) : date;
 
-  const finalResult = addHoursIfNeeded(addDaysIfNeeded(adjustedDate));
-  return fromZonedTime(finalResult, BUSINESS_HOURS.TIMEZONE).toISOString();
+  const adjustedDate = adjustToWorkingTime(startDate);
+  const addHoursAndDays = addHoursIfNeeded(addDaysIfNeeded(adjustedDate));
+  return fromZonedTime(addHoursAndDays, BUSINESS_HOURS.TIMEZONE).toISOString();
 };
 
 const adjustToWorkingTime = (date: Date): Date => {
@@ -48,7 +45,9 @@ const adjustToWorkingTime = (date: Date): Date => {
   }
 
   if (isAfterWorkingHour(hour)) {
-    return setHours(addDays(date, 1), BUSINESS_HOURS.WORK_START_HOUR);
+    return adjustToWorkingTime(
+      setHours(addDays(date, 1), BUSINESS_HOURS.WORK_START_HOUR),
+    );
   }
 
   return date;
