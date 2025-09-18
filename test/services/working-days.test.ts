@@ -88,7 +88,7 @@ describe("Working Days Service - Technical Assessment Examples", () => {
   });
 
   describe("Example 7: Working day 12:30 PM + 1 day", () => {
-    it("should adjust to 1 PM (after lunch) then add 1 day → next day 12 PM", async () => {
+    it("should adjust backwards to 12:00 PM then add 1 day → next day 12:00 PM", async () => {
       const result = await calculateWorkingDays(
         {
           date: "2025-01-06T17:30:00.000Z", // Monday 12:30 PM Colombia (UTC-5)
