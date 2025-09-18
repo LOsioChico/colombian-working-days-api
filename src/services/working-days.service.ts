@@ -1,4 +1,12 @@
-import { addHours, isWeekend, setHours, addDays, nextMonday } from "date-fns";
+import {
+  addHours,
+  isWeekend,
+  setHours,
+  addDays,
+  nextMonday,
+  setMinutes,
+  previousFriday,
+} from "date-fns";
 import { toZonedTime, fromZonedTime } from "date-fns-tz";
 
 import { BUSINESS_HOURS } from "../constants";
@@ -24,9 +32,8 @@ export const calculateWorkingDays = async (
   const addHoursIfNeeded = (date: Date): Date =>
     input.hours ? addWorkingHours(date, input.hours) : date;
 
-  const adjustedDate = adjustToWorkingTime(startDate);
-  const addHoursAndDays = addHoursIfNeeded(addDaysIfNeeded(adjustedDate));
-  const finalResult = adjustToWorkingTime(addHoursAndDays);
+  const adjustedStart = adjustBackwards(startDate);
+  const finalResult = addHoursIfNeeded(addDaysIfNeeded(adjustedStart));
   return fromZonedTime(finalResult, BUSINESS_HOURS.TIMEZONE).toISOString();
 };
 
@@ -73,7 +80,11 @@ const addBusinessDaysWithHolidays = (
 };
 
 const addWorkingHours = (date: Date, hours: number): Date => {
-  if (hours <= 0) return date;
+  if (hours <= 0) {
+    return isLunchTime(date.getHours())
+      ? setHours(date, BUSINESS_HOURS.LUNCH_END_HOUR)
+      : date;
+  }
 
   const hour = date.getHours();
 
@@ -82,4 +93,26 @@ const addWorkingHours = (date: Date, hours: number): Date => {
   }
 
   return addWorkingHours(adjustToWorkingTime(date), hours);
+};
+
+const adjustBackwards = (date: Date): Date => {
+  if (isWeekend(date)) {
+    return setHours(previousFriday(date), BUSINESS_HOURS.WORK_END_HOUR);
+  }
+
+  const hour = date.getHours();
+
+  if (isBeforeWorkingHour(hour)) {
+    return setHours(addDays(date, -1), BUSINESS_HOURS.WORK_END_HOUR);
+  }
+
+  if (isLunchTime(hour)) {
+    return setMinutes(setHours(date, BUSINESS_HOURS.LUNCH_START_HOUR), 0);
+  }
+
+  if (isAfterWorkingHour(hour)) {
+    return setHours(date, BUSINESS_HOURS.WORK_END_HOUR);
+  }
+
+  return date;
 };
