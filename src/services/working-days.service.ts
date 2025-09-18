@@ -1,5 +1,5 @@
 import { addHours, isWeekend, setHours, addDays, nextMonday } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+import { toZonedTime, fromZonedTime } from "date-fns-tz";
 
 import { BUSINESS_HOURS } from "../constants";
 import {
@@ -28,10 +28,8 @@ export const calculateWorkingDays = async (
   const addHoursIfNeeded = (date: Date): Date =>
     input.hours ? addWorkingHours(date, input.hours) : adjustedDate;
 
-  return toZonedTime(
-    addHoursIfNeeded(addDaysIfNeeded(adjustedDate)),
-    "UTC",
-  ).toISOString();
+  const finalResult = addHoursIfNeeded(addDaysIfNeeded(adjustedDate));
+  return fromZonedTime(finalResult, BUSINESS_HOURS.TIMEZONE).toISOString();
 };
 
 const adjustToWorkingTime = (date: Date): Date => {
