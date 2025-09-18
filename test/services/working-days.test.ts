@@ -46,7 +46,7 @@ describe("Working Days Service - Technical Assessment Examples", () => {
   });
 
   describe("Example 4: Sunday 6 PM + 1 day", () => {
-    it("should adjust to Monday 8 AM then add 1 day → Tuesday 8 AM", async () => {
+    it("should adjust backwards to Friday 5 PM then add 1 day → Monday 5 PM", async () => {
       const result = await calculateWorkingDays(
         {
           date: "2025-01-05T23:00:00.000Z", // Sunday 6 PM Colombia (UTC-5)
@@ -55,7 +55,7 @@ describe("Working Days Service - Technical Assessment Examples", () => {
         [],
       );
 
-      expect(result).toBe("2025-01-07T13:00:00.000Z"); // Tuesday 8 AM Colombia in UTC
+      expect(result).toBe("2025-01-06T22:00:00.000Z"); // Monday 5 PM Colombia in UTC
     });
   });
 
@@ -128,7 +128,7 @@ describe("Working Days Service - Technical Assessment Examples", () => {
         mockHolidays,
       );
 
-      expect(result).toBe("2025-04-22T01:00:00.000Z"); // April 21 8 PM Colombia in UTC (adjusted for holidays)
+      expect(result).toBe("2025-04-21T20:00:00.000Z"); // April 21 3:00 PM Colombia in UTC (as per assessment)
     });
   });
 
