@@ -26,7 +26,8 @@ export const calculateWorkingDays = async (
 
   const adjustedDate = adjustToWorkingTime(startDate);
   const addHoursAndDays = addHoursIfNeeded(addDaysIfNeeded(adjustedDate));
-  return fromZonedTime(addHoursAndDays, BUSINESS_HOURS.TIMEZONE).toISOString();
+  const finalResult = adjustToWorkingTime(addHoursAndDays);
+  return fromZonedTime(finalResult, BUSINESS_HOURS.TIMEZONE).toISOString();
 };
 
 const adjustToWorkingTime = (date: Date): Date => {
