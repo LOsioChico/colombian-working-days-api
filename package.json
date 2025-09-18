@@ -7,7 +7,8 @@
     "deploy": "wrangler deploy --minify",
     "types": "wrangler types --env-interface CloudflareBindings",
     "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix"
+    "lint:fix": "eslint . --ext .ts --fix",
+    "test": "vitest"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.3",
@@ -24,6 +25,7 @@
     "prettier": "^3.6.2",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.0",
+    "vitest": "^3.2.4",
     "wrangler": "^4.4.0"
   }
 }
