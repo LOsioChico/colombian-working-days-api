@@ -121,7 +121,7 @@ describe("Working Days Service - Technical Assessment Examples", () => {
 
       const result = await calculateWorkingDays(
         {
-          date: "2025-04-10T20:00:00.000Z", // April 10 3 PM Colombia (UTC-5)
+          date: "2025-04-10T15:00:00.000Z", // April 10 10:00 AM Colombia (UTC-5)
           days: 5,
           hours: 4,
         },
