@@ -10,10 +10,20 @@ workingDaysController.get(
   "/",
   zValidator("query", workingDaysSchema),
   async (c) => {
-    const input = c.req.valid("query") as WorkingDaysInput;
-    const holidays = await getHolidays();
-    const result = await calculateWorkingDays(input, holidays);
-    return c.json({ date: result }, 200);
+    try {
+      const input = c.req.valid("query") as WorkingDaysInput;
+      const holidays = await getHolidays();
+      const result = await calculateWorkingDays(input, holidays);
+      return c.json({ date: result }, 200);
+    } catch {
+      return c.json(
+        {
+          error: "InternalError",
+          message: "Failed to calculate working days",
+        },
+        500,
+      );
+    }
   },
 );
 
