@@ -11,7 +11,7 @@ workingDaysController.get(
   zValidator("query", workingDaysSchema),
   async (c) => {
     try {
-      const input = c.req.valid("query") as WorkingDaysInput;
+      const input: WorkingDaysInput = c.req.valid("query");
       const holidays = await getHolidays();
       const result = await calculateWorkingDays(input, holidays);
       return c.json({ date: result }, 200);

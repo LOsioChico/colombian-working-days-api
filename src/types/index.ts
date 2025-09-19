@@ -4,4 +4,6 @@ import { workingDaysSchema } from "../utils/validators";
 
 export type WorkingDaysInput = z.infer<typeof workingDaysSchema>;
 
-export type ColombianHoliday = { __brand: "ColombianHoliday" } & string;
+export type ColombianHoliday = string & {
+  readonly __brand: "ColombianHoliday";
+};
