@@ -16,11 +16,11 @@ import {
   isLunchTime,
   isWorkingTime,
 } from "../utils/working-utils";
-import { WorkingDaysInput } from "../types";
+import { WorkingDaysInput, ColombianHoliday } from "../types";
 
 export const calculateWorkingDays = async (
   input: WorkingDaysInput,
-  holidays: string[],
+  holidays: ColombianHoliday[],
 ): Promise<string> => {
   const startDate = input.date
     ? toZonedTime(new Date(input.date), BUSINESS_HOURS.TIMEZONE)
