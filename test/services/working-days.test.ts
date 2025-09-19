@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { calculateWorkingDays } from "../../src/services/working-days.service";
+import { ColombianHoliday } from "../../src/types";
 
 describe("Working Days Service - Technical Assessment Examples", () => {
   describe("Example 1: Friday 5 PM + 1 hour", () => {
@@ -117,7 +118,7 @@ describe("Working Days Service - Technical Assessment Examples", () => {
 
   describe("Example 9: With Colombian holidays", () => {
     it("should skip holidays when calculating working days", async () => {
-      const mockHolidays = ["2025-04-17", "2025-04-18"]; // Mock holidays
+      const mockHolidays = ["2025-04-17", "2025-04-18"] as ColombianHoliday[]; // Mock holidays
 
       const result = await calculateWorkingDays(
         {
