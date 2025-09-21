@@ -68,15 +68,15 @@ const addBusinessDaysWithHolidays = (
 ): Date => {
   if (days <= 0) return date;
 
-  const nextDate = addDays(date, 1);
-  const dateString = nextDate.toISOString().split("T")[0];
+  const nextDay = addDays(date, 1);
+  const dateString = nextDay.toISOString().split("T")[0];
   const isHoliday = dateString && holidays.includes(dateString);
 
-  if (isWeekend(nextDate) || isHoliday) {
-    return addBusinessDaysWithHolidays(nextDate, days, holidays);
+  if (isWeekend(nextDay) || isHoliday) {
+    return addBusinessDaysWithHolidays(nextDay, days, holidays);
   }
 
-  return addBusinessDaysWithHolidays(nextDate, days - 1, holidays);
+  return addBusinessDaysWithHolidays(nextDay, days - 1, holidays);
 };
 
 const addWorkingHours = (date: Date, hours: number): Date => {
