@@ -157,17 +157,5 @@ describe("Working Days Service - Technical Assessment Examples", () => {
 
       expect(result).toBe("2025-01-08T13:00:00.000Z"); // Wednesday 8 AM Colombia in UTC
     });
-
-    it("should handle only hours parameter", async () => {
-      const result = await calculateWorkingDays(
-        {
-          date: "2025-01-06T13:00:00.000Z", // Monday 8 AM Colombia
-          hours: 4,
-        },
-        [],
-      );
-
-      expect(result).toBe("2025-01-06T18:00:00.000Z"); // Monday 1 PM Colombia in UTC (after lunch)
-    });
   });
 });

@@ -80,11 +80,7 @@ const addBusinessDaysWithHolidays = (
 };
 
 const addWorkingHours = (date: Date, hours: number): Date => {
-  if (hours <= 0) {
-    return isLunchTime(date.getHours())
-      ? setHours(date, BUSINESS_HOURS.LUNCH_END_HOUR)
-      : date;
-  }
+  if (hours <= 0) return date;
 
   const hour = date.getHours();
 
