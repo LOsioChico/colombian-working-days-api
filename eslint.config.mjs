@@ -12,4 +12,9 @@ export default defineConfig(
   {
     ignores: ["worker-configuration.d.ts"],
   },
+  {
+    rules: {
+      "@typescript-eslint/no-non-null-assertion": "off",
+    },
+  },
 );

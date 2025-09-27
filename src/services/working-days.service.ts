@@ -1,20 +1,14 @@
-import {
-  addHours,
-  isWeekend,
-  setHours,
-  addDays,
-  nextMonday,
-  setMinutes,
-  previousFriday,
-} from "date-fns";
+import { addHours, setHours, addDays, nextMonday, isWeekend } from "date-fns";
 import { toZonedTime, fromZonedTime } from "date-fns-tz";
 
 import { BUSINESS_HOURS } from "../constants";
 import {
   isAfterWorkingHour,
   isBeforeWorkingHour,
+  isHoliday,
   isLunchTime,
   isWorkingTime,
+  resetTimeToHour,
 } from "../utils/working-utils";
 import { WorkingDaysInput, ColombianHoliday } from "../types";
 
@@ -32,7 +26,7 @@ export const calculateWorkingDays = async (
   const addWorkingHoursFromInput = (date: Date): Date =>
     input.hours ? addWorkingHours(date, input.hours) : date;
 
-  const adjustedStart = adjustBackwards(startDate);
+  const adjustedStart = adjustBackwards(startDate, holidays);
   const finalResult = addWorkingHoursFromInput(addBusinessDays(adjustedStart));
   return fromZonedTime(finalResult, BUSINESS_HOURS.TIMEZONE).toISOString();
 };
@@ -69,10 +63,8 @@ const addBusinessDaysWithHolidays = (
   if (days <= 0) return date;
 
   const nextDay = addDays(date, 1);
-  const dateString = nextDay.toISOString().split("T")[0];
-  const isHoliday = dateString && holidays.includes(dateString);
 
-  if (isWeekend(nextDay) || isHoliday) {
+  if (isWeekend(nextDay) || isHoliday(nextDay, holidays)) {
     return addBusinessDaysWithHolidays(nextDay, days, holidays);
   }
 
@@ -91,23 +83,24 @@ const addWorkingHours = (date: Date, hours: number): Date => {
   return addWorkingHours(adjustForward(date), hours);
 };
 
-const adjustBackwards = (date: Date): Date => {
-  if (isWeekend(date)) {
-    return setHours(previousFriday(date), BUSINESS_HOURS.WORK_END_HOUR);
-  }
-
+const adjustBackwards = (date: Date, holidays: string[]): Date => {
   const hour = date.getHours();
 
-  if (isBeforeWorkingHour(hour)) {
-    return setHours(addDays(date, -1), BUSINESS_HOURS.WORK_END_HOUR);
+  if (
+    isBeforeWorkingHour(hour) ||
+    isHoliday(date, holidays) ||
+    isWeekend(date)
+  ) {
+    const adjustedTime = resetTimeToHour(date, BUSINESS_HOURS.WORK_END_HOUR);
+    return adjustBackwards(addDays(adjustedTime, -1), holidays);
   }
 
   if (isLunchTime(hour)) {
-    return setMinutes(setHours(date, BUSINESS_HOURS.LUNCH_START_HOUR), 0);
+    return resetTimeToHour(date, BUSINESS_HOURS.LUNCH_START_HOUR);
   }
 
   if (isAfterWorkingHour(hour)) {
-    return setHours(date, BUSINESS_HOURS.WORK_END_HOUR);
+    return resetTimeToHour(date, BUSINESS_HOURS.WORK_END_HOUR);
   }
 
   return date;
