@@ -8,7 +8,7 @@ import {
   isHoliday,
   isLunchTime,
   isWorkingTime,
-  resetTimeToHour,
+  setDateTime,
 } from "../utils/working-utils";
 import { WorkingDaysInput, ColombianHoliday } from "../types";
 
@@ -19,6 +19,10 @@ export const calculateWorkingDays = async (
   const startDate = input.date
     ? toZonedTime(new Date(input.date), BUSINESS_HOURS.TIMEZONE)
     : toZonedTime(new Date(), BUSINESS_HOURS.TIMEZONE);
+  const cleanedDate = setDateTime(startDate, {
+    hour: startDate.getHours(),
+    minute: startDate.getMinutes(),
+  });
 
   const addBusinessDaysFromInput = (date: Date): Date =>
     input.days ? addBusinessDays(date, input.days, holidays) : date;
@@ -26,7 +30,7 @@ export const calculateWorkingDays = async (
   const addWorkingHoursFromInput = (date: Date): Date =>
     input.hours ? addWorkingHours(date, input.hours) : date;
 
-  const adjustedStart = adjustBackwards(startDate, holidays);
+  const adjustedStart = adjustBackwards(cleanedDate, holidays);
   const finalResult = addWorkingHoursFromInput(
     addBusinessDaysFromInput(adjustedStart),
   );
@@ -93,16 +97,22 @@ const adjustBackwards = (date: Date, holidays: string[]): Date => {
     isHoliday(date, holidays) ||
     isWeekend(date)
   ) {
-    const adjustedTime = resetTimeToHour(date, BUSINESS_HOURS.WORK_END_HOUR);
+    const adjustedTime = setDateTime(date, {
+      hour: BUSINESS_HOURS.WORK_END_HOUR,
+    });
     return adjustBackwards(addDays(adjustedTime, -1), holidays);
   }
 
   if (isLunchTime(hour)) {
-    return resetTimeToHour(date, BUSINESS_HOURS.LUNCH_START_HOUR);
+    return setDateTime(date, {
+      hour: BUSINESS_HOURS.LUNCH_START_HOUR,
+    });
   }
 
   if (isAfterWorkingHour(hour)) {
-    return resetTimeToHour(date, BUSINESS_HOURS.WORK_END_HOUR);
+    return setDateTime(date, {
+      hour: BUSINESS_HOURS.WORK_END_HOUR,
+    });
   }
 
   return date;

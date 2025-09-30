@@ -1,5 +1,6 @@
 import { setHours, setMilliseconds, setMinutes, setSeconds } from "date-fns";
 import { BUSINESS_HOURS } from "../constants";
+import { SetDateTimeProps } from "../types";
 
 export const isWorkingTime = (hour: number): boolean => {
   return isWorkingHour(hour) && !isLunchTime(hour);
@@ -30,6 +31,12 @@ export const isHoliday = (date: Date, holidays: string[]): boolean => {
   return holidays.includes(dateString!);
 };
 
-export const resetTimeToHour = (date: Date, hour: number): Date => {
-  return setHours(setMinutes(setSeconds(setMilliseconds(date, 0), 0), 0), hour);
+export const setDateTime = (
+  date: Date,
+  { hour = 0, minute = 0, second = 0, millisecond = 0 }: SetDateTimeProps,
+): Date => {
+  return setMilliseconds(
+    setSeconds(setMinutes(setHours(date, hour), minute), second),
+    millisecond,
+  );
 };
