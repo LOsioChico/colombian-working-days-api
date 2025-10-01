@@ -42,17 +42,15 @@ const adjustForward = (date: Date): Date => {
     return setHours(nextMonday(date), BUSINESS_HOURS.WORK_START_HOUR);
   }
 
-  const hour = date.getHours();
-
-  if (isBeforeWorkingHour(hour)) {
+  if (isBeforeWorkingHour(date)) {
     return setHours(date, BUSINESS_HOURS.WORK_START_HOUR);
   }
 
-  if (isLunchTime(hour)) {
+  if (isLunchTime(date)) {
     return setHours(date, BUSINESS_HOURS.LUNCH_END_HOUR);
   }
 
-  if (isAfterWorkingHour(hour)) {
+  if (isAfterWorkingHour(date)) {
     return adjustForward(
       setHours(addDays(date, 1), BUSINESS_HOURS.WORK_START_HOUR),
     );
@@ -80,9 +78,7 @@ const addBusinessDays = (
 const addWorkingHours = (date: Date, hours: number): Date => {
   if (hours <= 0) return date;
 
-  const hour = date.getHours();
-
-  if (isWorkingTime(hour)) {
+  if (isWorkingTime(date)) {
     return addWorkingHours(addHours(date, 1), hours - 1);
   }
 
@@ -90,10 +86,8 @@ const addWorkingHours = (date: Date, hours: number): Date => {
 };
 
 const adjustBackwards = (date: Date, holidays: string[]): Date => {
-  const hour = date.getHours();
-
   if (
-    isBeforeWorkingHour(hour) ||
+    isBeforeWorkingHour(date) ||
     isHoliday(date, holidays) ||
     isWeekend(date)
   ) {
@@ -103,13 +97,13 @@ const adjustBackwards = (date: Date, holidays: string[]): Date => {
     return adjustBackwards(addDays(adjustedTime, -1), holidays);
   }
 
-  if (isLunchTime(hour)) {
+  if (isLunchTime(date)) {
     return setDateTime(date, {
       hour: BUSINESS_HOURS.LUNCH_START_HOUR,
     });
   }
 
-  if (isAfterWorkingHour(hour)) {
+  if (isAfterWorkingHour(date)) {
     return setDateTime(date, {
       hour: BUSINESS_HOURS.WORK_END_HOUR,
     });
@@ -119,9 +113,8 @@ const adjustBackwards = (date: Date, holidays: string[]): Date => {
 };
 
 const addHourIfMinutesRemain = (date: Date): Date => {
-  const hour = date.getHours();
   const minutes = date.getMinutes();
-  if (minutes > 0 && isAfterWorkingHour(hour)) {
+  if (minutes > 0 && isAfterWorkingHour(date)) {
     return adjustForward(addHours(date, 1));
   }
   return date;
