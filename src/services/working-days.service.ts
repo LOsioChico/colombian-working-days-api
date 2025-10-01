@@ -31,9 +31,9 @@ export const calculateWorkingDays = async (
     input.hours ? addWorkingHours(date, input.hours) : date;
 
   const adjustedStart = adjustBackwards(cleanedDate, holidays);
-  const finalResult = addWorkingHoursFromInput(
-    addBusinessDaysFromInput(adjustedStart),
-  );
+  const addedDays = addBusinessDaysFromInput(adjustedStart);
+  const addedHours = addWorkingHoursFromInput(addedDays);
+  const finalResult = addHourIfMinutesRemain(addedHours);
   return fromZonedTime(finalResult, BUSINESS_HOURS.TIMEZONE).toISOString();
 };
 
@@ -115,5 +115,14 @@ const adjustBackwards = (date: Date, holidays: string[]): Date => {
     });
   }
 
+  return date;
+};
+
+const addHourIfMinutesRemain = (date: Date): Date => {
+  const hour = date.getHours();
+  const minutes = date.getMinutes();
+  if (minutes > 0 && isAfterWorkingHour(hour)) {
+    return adjustForward(addHours(date, 1));
+  }
   return date;
 };
